@@ -1,0 +1,562 @@
+---
+source: crates/biome_js_analyze/tests/spec_tests.rs
+expression: invalid.js
+---
+# Input
+```js
+/* should generate diagnostics */
+{
+	function foo() {
+		return;
+	}
+}
+{
+	function foo() {
+		doSomething();
+		return;
+	}
+}
+{
+	function foo() {
+		if (condition) {
+			bar();
+			return;
+		} else {
+			baz();
+		}
+	}
+}
+{
+	function foo() {
+		if (foo) return;
+	}
+}
+{
+	function foo() {
+		bar();
+		return /**/;
+	}
+}
+{
+	function foo() {
+		bar();
+		return; //
+	}
+}
+{
+	function foo() {
+		if (foo) {
+			return;
+		}
+		return;
+	}
+}
+{
+	function foo() {
+		switch (bar) {
+			case 1:
+				doSomething();
+			default:
+				doSomethingElse();
+				return;
+		}
+	}
+}
+{
+	function foo() {
+		switch (bar) {
+			default:
+				doSomething();
+			case 1:
+				doSomething();
+				return;
+		}
+	}
+}
+{
+	function foo() {
+		switch (bar) {
+			case 1:
+				if (a) {
+					doSomething();
+					return;
+				}
+				break;
+			default:
+				doSomethingElse();
+		}
+	}
+}
+{
+	function foo() {
+		switch (bar) {
+			case 1:
+				if (a) {
+					doSomething();
+					return;
+				} else {
+					doSomething();
+				}
+				break;
+			default:
+				doSomethingElse();
+		}
+	}
+}
+{
+	function foo() {
+		switch (bar) {
+			case 1:
+				if (a) {
+					doSomething();
+					return;
+				}
+			default:
+		}
+	}
+}
+{
+	function foo() {
+		try {
+		} catch (err) {
+			return;
+		}
+	}
+}
+{
+	function foo() {
+		try {
+			foo();
+			return;
+		} catch (err) {
+			return 5;
+		}
+	}
+}
+{
+	function foo() {
+		if (something) {
+			try {
+				bar();
+				return;
+			} catch (err) {}
+		}
+	}
+}
+{
+	function foo() {
+		try {
+			return;
+		} catch (err) {
+			foo();
+		}
+	}
+}
+{
+	function foo() {
+		try {
+			return;
+		} finally {
+			bar();
+		}
+	}
+}
+{
+	function foo() {
+		try {
+			bar();
+		} catch (e) {
+			try {
+				baz();
+				return;
+			} catch (e) {
+				qux();
+			}
+		}
+	}
+}
+{
+	function foo() {
+		try {
+		} finally {
+		}
+		return;
+	}
+}
+{
+	function foo() {
+		try {
+			return 5;
+		} finally {
+			function bar() {
+				return;
+			}
+		}
+	}
+}
+{
+	function foo() {
+		return;
+		return;
+	}
+}
+
+```
+
+# Diagnostics
+```
+invalid.js:4:3 lint/nursery/noUselessReturn ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Unnecessary return statement.
+  
+    2 │ {
+    3 │ 	function foo() {
+  > 4 │ 		return;
+      │ 		^^^^^^^
+    5 │ 	}
+    6 │ }
+  
+  i This return statement can be removed without changing the behavior of the program.
+  
+
+```
+
+```
+invalid.js:10:3 lint/nursery/noUselessReturn ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Unnecessary return statement.
+  
+     8 │ 	function foo() {
+     9 │ 		doSomething();
+  > 10 │ 		return;
+       │ 		^^^^^^^
+    11 │ 	}
+    12 │ }
+  
+  i This return statement can be removed without changing the behavior of the program.
+  
+
+```
+
+```
+invalid.js:17:4 lint/nursery/noUselessReturn ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Unnecessary return statement.
+  
+    15 │ 		if (condition) {
+    16 │ 			bar();
+  > 17 │ 			return;
+       │ 			^^^^^^^
+    18 │ 		} else {
+    19 │ 			baz();
+  
+  i This return statement can be removed without changing the behavior of the program.
+  
+
+```
+
+```
+invalid.js:25:12 lint/nursery/noUselessReturn ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Unnecessary return statement.
+  
+    23 │ {
+    24 │ 	function foo() {
+  > 25 │ 		if (foo) return;
+       │ 		         ^^^^^^^
+    26 │ 	}
+    27 │ }
+  
+  i This return statement can be removed without changing the behavior of the program.
+  
+
+```
+
+```
+invalid.js:31:3 lint/nursery/noUselessReturn ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Unnecessary return statement.
+  
+    29 │ 	function foo() {
+    30 │ 		bar();
+  > 31 │ 		return /**/;
+       │ 		^^^^^^^^^^^^
+    32 │ 	}
+    33 │ }
+  
+  i This return statement can be removed without changing the behavior of the program.
+  
+
+```
+
+```
+invalid.js:37:3 lint/nursery/noUselessReturn ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Unnecessary return statement.
+  
+    35 │ 	function foo() {
+    36 │ 		bar();
+  > 37 │ 		return; //
+       │ 		^^^^^^^
+    38 │ 	}
+    39 │ }
+  
+  i This return statement can be removed without changing the behavior of the program.
+  
+
+```
+
+```
+invalid.js:43:4 lint/nursery/noUselessReturn ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Unnecessary return statement.
+  
+    41 │ 	function foo() {
+    42 │ 		if (foo) {
+  > 43 │ 			return;
+       │ 			^^^^^^^
+    44 │ 		}
+    45 │ 		return;
+  
+  i This return statement can be removed without changing the behavior of the program.
+  
+
+```
+
+```
+invalid.js:45:3 lint/nursery/noUselessReturn ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Unnecessary return statement.
+  
+    43 │ 			return;
+    44 │ 		}
+  > 45 │ 		return;
+       │ 		^^^^^^^
+    46 │ 	}
+    47 │ }
+  
+  i This return statement can be removed without changing the behavior of the program.
+  
+
+```
+
+```
+invalid.js:55:5 lint/nursery/noUselessReturn ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Unnecessary return statement.
+  
+    53 │ 			default:
+    54 │ 				doSomethingElse();
+  > 55 │ 				return;
+       │ 				^^^^^^^
+    56 │ 		}
+    57 │ 	}
+  
+  i This return statement can be removed without changing the behavior of the program.
+  
+
+```
+
+```
+invalid.js:66:5 lint/nursery/noUselessReturn ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Unnecessary return statement.
+  
+    64 │ 			case 1:
+    65 │ 				doSomething();
+  > 66 │ 				return;
+       │ 				^^^^^^^
+    67 │ 		}
+    68 │ 	}
+  
+  i This return statement can be removed without changing the behavior of the program.
+  
+
+```
+
+```
+invalid.js:106:6 lint/nursery/noUselessReturn ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Unnecessary return statement.
+  
+    104 │ 				if (a) {
+    105 │ 					doSomething();
+  > 106 │ 					return;
+        │ 					^^^^^^^
+    107 │ 				}
+    108 │ 			default:
+  
+  i This return statement can be removed without changing the behavior of the program.
+  
+
+```
+
+```
+invalid.js:116:4 lint/nursery/noUselessReturn ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Unnecessary return statement.
+  
+    114 │ 		try {
+    115 │ 		} catch (err) {
+  > 116 │ 			return;
+        │ 			^^^^^^^
+    117 │ 		}
+    118 │ 	}
+  
+  i This return statement can be removed without changing the behavior of the program.
+  
+
+```
+
+```
+invalid.js:124:4 lint/nursery/noUselessReturn ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Unnecessary return statement.
+  
+    122 │ 		try {
+    123 │ 			foo();
+  > 124 │ 			return;
+        │ 			^^^^^^^
+    125 │ 		} catch (err) {
+    126 │ 			return 5;
+  
+  i This return statement can be removed without changing the behavior of the program.
+  
+
+```
+
+```
+invalid.js:135:5 lint/nursery/noUselessReturn ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Unnecessary return statement.
+  
+    133 │ 			try {
+    134 │ 				bar();
+  > 135 │ 				return;
+        │ 				^^^^^^^
+    136 │ 			} catch (err) {}
+    137 │ 		}
+  
+  i This return statement can be removed without changing the behavior of the program.
+  
+
+```
+
+```
+invalid.js:143:4 lint/nursery/noUselessReturn ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Unnecessary return statement.
+  
+    141 │ 	function foo() {
+    142 │ 		try {
+  > 143 │ 			return;
+        │ 			^^^^^^^
+    144 │ 		} catch (err) {
+    145 │ 			foo();
+  
+  i This return statement can be removed without changing the behavior of the program.
+  
+
+```
+
+```
+invalid.js:152:4 lint/nursery/noUselessReturn ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Unnecessary return statement.
+  
+    150 │ 	function foo() {
+    151 │ 		try {
+  > 152 │ 			return;
+        │ 			^^^^^^^
+    153 │ 		} finally {
+    154 │ 			bar();
+  
+  i This return statement can be removed without changing the behavior of the program.
+  
+
+```
+
+```
+invalid.js:165:5 lint/nursery/noUselessReturn ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Unnecessary return statement.
+  
+    163 │ 			try {
+    164 │ 				baz();
+  > 165 │ 				return;
+        │ 				^^^^^^^
+    166 │ 			} catch (e) {
+    167 │ 				qux();
+  
+  i This return statement can be removed without changing the behavior of the program.
+  
+
+```
+
+```
+invalid.js:177:3 lint/nursery/noUselessReturn ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Unnecessary return statement.
+  
+    175 │ 		} finally {
+    176 │ 		}
+  > 177 │ 		return;
+        │ 		^^^^^^^
+    178 │ 	}
+    179 │ }
+  
+  i This return statement can be removed without changing the behavior of the program.
+  
+
+```
+
+```
+invalid.js:186:5 lint/nursery/noUselessReturn ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Unnecessary return statement.
+  
+    184 │ 		} finally {
+    185 │ 			function bar() {
+  > 186 │ 				return;
+        │ 				^^^^^^^
+    187 │ 			}
+    188 │ 		}
+  
+  i This return statement can be removed without changing the behavior of the program.
+  
+
+```
+
+```
+invalid.js:193:3 lint/nursery/noUselessReturn ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Unnecessary return statement.
+  
+    191 │ {
+    192 │ 	function foo() {
+  > 193 │ 		return;
+        │ 		^^^^^^^
+    194 │ 		return;
+    195 │ 	}
+  
+  i This return statement can be removed without changing the behavior of the program.
+  
+
+```
+
+```
+invalid.js:194:3 lint/nursery/noUselessReturn ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Unnecessary return statement.
+  
+    192 │ 	function foo() {
+    193 │ 		return;
+  > 194 │ 		return;
+        │ 		^^^^^^^
+    195 │ 	}
+    196 │ }
+  
+  i This return statement can be removed without changing the behavior of the program.
+  
+
+```
